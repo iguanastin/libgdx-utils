@@ -120,7 +120,8 @@ public class Slider extends Actor {
                     newValue = max;
                 }
                 if (newValue % step != 0) {
-                    //TODO: Set newValue to multiple of step
+                    float work = (float)newValue/step;
+                    newValue = (int)Math.floor(work)*step;
                 }
 
                 //If value has changed, fire dragged listener
