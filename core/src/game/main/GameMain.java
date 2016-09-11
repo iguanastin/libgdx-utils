@@ -3,15 +3,31 @@ package game.main;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import utils.gui.Gui;
+import utils.gui.Slider;
+import utils.gui.SliderListener;
 
 public class GameMain extends ApplicationAdapter {
+
+    private Slider slider;
 
     @Override
     public void create() {
         Gui.resetRenderers();
+
+        slider = new Slider(300, 300, 300, 50);
+        slider.setValues(0, 100, 50, 10);
+        slider.setSliderListener(new SliderListener() {
+            @Override
+            public void sliderDragged(Slider slider, int value) {
+                System.out.println("Dragged slider: " + value);
+            }
+
+            @Override
+            public void sliderDropped(Slider slider, int value) {
+                System.out.println("Dropped slider: " + value);
+            }
+        });
     }
 
     @Override
@@ -24,8 +40,8 @@ public class GameMain extends ApplicationAdapter {
         Gui.dispose();
     }
 
-    public void act(float delta) {
-
+    private void act(float delta) {
+        slider.act(delta);
     }
 
     @Override
@@ -41,7 +57,7 @@ public class GameMain extends ApplicationAdapter {
         Gui.begin(Gui.batch);
 
         //Render things here
-        
+        slider.draw(Gui.batch, 1f);
 
         //End all renderers
         Gui.end(Gui.batch);

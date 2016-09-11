@@ -1,27 +1,148 @@
 package utils.gui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-/**
- * Created by Austin on 9/10/2016.
- */
 public class Slider extends Actor {
 
+    private static final int SLIDER_BAR_WIDTH = 10;
+
     private int min = 0, max = 100, current = 50;
+    private int step = 1;
+
     private boolean dragging = false;
-    private int dragOffset = 0;
 
     private SliderListener listener;
 
-    public void setSliderListener(SliderListener listener) {
+    public Slider(int x, int y, int width, int height) {
+        setSize(width, height);
+        setPosition(x, y);
+    }
+
+    /**
+     * Sets values for this slider
+     *
+     * @param min Minimum allowed value
+     * @param max Maximum allowed value
+     * @param current Current value
+     * @param step Step size
+     * @return This slider
+     */
+    public Slider setValues(int min, int max, int current, int step) {
+        if (max == min) {
+            max = min+1;
+        } else if (max < min) {
+            int temp = min;
+            min = max;
+            max = temp;
+        }
+
+        this.min = min;
+        this.max = max;
+        this.current = current;
+        this.step = step;
+
+        return this;
+    }
+
+    /**
+     *
+     * @return The current value this slider is at
+     */
+    public int getValue() {
+        return current;
+    }
+
+    /**
+     *
+     * @return Minimum possible value of this slider
+     */
+    public int getMin() {
+        return min;
+    }
+
+    /**
+     *
+     * @return Maximum possible value of this slider
+     */
+    public int getMax() {
+        return max;
+    }
+
+    /**
+     *
+     * @return Step size of this slider
+     */
+    public int getStep() {
+        return step;
+    }
+
+    /**
+     * Sets this drag/drop listener for this slider
+     *
+     * @param listener Listener to be set
+     * @return This slider
+     */
+    public Slider setSliderListener(SliderListener listener) {
         this.listener = listener;
+
+        return this;
     }
 
     @Override
     public void act(float delta) {
+        if (isMouseJustDownOnThis()) {
+            //Start dragging
+            dragging = true;
+        } else if (dragging) {
+            if (!Gdx.input.isTouched()) {
+                //Stop dragging
+                dragging = false;
+                //Fire dropped listener
+                if (listener != null) {
+                    listener.sliderDropped(this, current);
+                }
+            } else {
+                int newValue;
 
+                //Find newValue
+                float relativeX = Gdx.input.getX() - getX();
+                float pixelWidth = getWidth() - SLIDER_BAR_WIDTH;
+                float scalar = relativeX/pixelWidth;
+                newValue = min + (int)((max-min)*scalar);
+
+                //Ensure newValue is acceptable
+                if (newValue < min) {
+                    newValue = min;
+                } else if (newValue > max) {
+                    newValue = max;
+                }
+                if (newValue % step != 0) {
+                    //TODO: Set newValue to multiple of step
+                }
+
+                //If value has changed, fire dragged listener
+                if (newValue != current && listener != null) {
+                    listener.sliderDragged(this, newValue);
+                }
+
+                //Set new value
+                current = newValue;
+            }
+        }
+    }
+
+    /**
+     * Determines if the mouse was just clicked and is currently over within this object's bounds.
+     *
+     * @return true if the mouse was just clicked and is within this object's bounds, false otherwise
+     */
+    private boolean isMouseJustDownOnThis() {
+        int x = Gdx.input.getX();
+        int y = Gdx.graphics.getHeight() - Gdx.input.getY();
+        return Gdx.input.justTouched() && x > getX() && x < getX() + getWidth() && y > getY() && y < getY() + getHeight();
     }
 
     @Override
@@ -32,6 +153,15 @@ public class Slider extends Actor {
 
         //Render frame background
         Gui.sr.rect(getX(), getY(), getWidth(), getHeight());
+
+        //Render slider bar
+        int offset = (int)((((float)current-min)/((float)max-min))*(getWidth() - SLIDER_BAR_WIDTH));
+        if (dragging) {
+            Gui.sr.setColor(Gui.alternate_color);
+        } else {
+            Gui.sr.setColor(Gui.trim_color);
+        }
+        Gui.sr.rect(getX() + offset, getY(), SLIDER_BAR_WIDTH, getHeight());
 
         //Render frame border
         if (Gui.has_border) {
