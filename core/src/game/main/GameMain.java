@@ -11,6 +11,8 @@ public class GameMain extends ApplicationAdapter {
 
     private Slider slider;
 
+    public boolean drawFps = true;
+
     @Override
     public void create() {
         Gui.resetRenderers();
@@ -58,6 +60,12 @@ public class GameMain extends ApplicationAdapter {
 
         //Render things here
         slider.draw(Gui.batch, 1f);
+
+        //Render fps counter
+        if (drawFps) {
+            Gui.begin(Gui.batch);
+            Gui.font.draw(Gui.batch, "" + Gdx.graphics.getFramesPerSecond(), 5, Gdx.graphics.getHeight() - 5);
+        }
 
         //End all renderers
         Gui.end(Gui.batch);
