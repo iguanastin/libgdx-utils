@@ -11,6 +11,7 @@ public class Slider extends Actor {
 
     private int min = 0, max = 100, current = 50;
     private int step = 1;
+    private String text;
 
     private boolean dragging = false;
 
@@ -30,7 +31,7 @@ public class Slider extends Actor {
      * @param step Step size
      * @return This slider
      */
-    public Slider setValues(int min, int max, int current, int step) {
+    public Slider setValues(int min, int max, int current, int step, String text) {
         if (max == min) {
             max = min+1;
         } else if (max < min) {
@@ -43,6 +44,7 @@ public class Slider extends Actor {
         this.max = max;
         this.current = current;
         this.step = step;
+        this.text = text;
 
         return this;
     }
@@ -114,14 +116,14 @@ public class Slider extends Actor {
                 newValue = min + (int)((max-min)*scalar);
 
                 //Ensure newValue is acceptable
+                if (newValue % step != 0) {
+                    float work = (float)newValue/step;
+                    newValue = (int)(work+0.5f)*step;
+                }
                 if (newValue < min) {
                     newValue = min;
                 } else if (newValue > max) {
                     newValue = max;
-                }
-                if (newValue % step != 0) {
-                    float work = (float)newValue/step;
-                    newValue = (int)Math.floor(work)*step;
                 }
 
                 //If value has changed, fire dragged listener
@@ -172,5 +174,13 @@ public class Slider extends Actor {
 
         //End shape rendering
         Gui.end(Gui.sr);
+
+        //Begin batch
+        Gui.begin(batch);
+
+        //Draw text
+        Gui.font.draw(batch, text, getX() - Gui.getStringPixelWidth(text) - 5, getY() + getHeight()/2 + Gui.getStringPixelHeight(text)/2);
+        String valueText = "" + getValue();
+        Gui.font.draw(batch, valueText, getX() + getWidth() + 5, getY() + getHeight()/2 + Gui.getStringPixelHeight(valueText)/2);
     }
 }

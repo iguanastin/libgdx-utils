@@ -18,7 +18,7 @@ public class GameMain extends ApplicationAdapter {
         Gui.resetRenderers();
 
         slider = new Slider(300, 300, 300, 50);
-        slider.setValues(0, 100, 50, 10);
+        slider.setValues(0, 100, 50, 10, "Slider test");
         slider.setSliderListener(new SliderListener() {
             @Override
             public void sliderDragged(Slider slider, int value) {
