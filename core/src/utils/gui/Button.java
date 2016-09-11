@@ -48,16 +48,26 @@ public class Button extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         Gui.end(batch);
         Gui.begin(Gui.sr, ShapeRenderer.ShapeType.Filled, Gui.frame_color);
+
+        //Use alt color if mouse down on button
         if (mouseDown) {
             Gui.sr.setColor(Gui.alternate_color);
         }
+        //Draw frame background
         Gui.sr.rect(getX(), getY(), getWidth(), getHeight());
+
+        //Draw trim if applicable
         if (Gui.has_border) {
             Gui.begin(Gui.sr, ShapeRenderer.ShapeType.Line, Gui.trim_color);
+            Gui.sr.rect(getX(), getY(), getWidth(), getHeight());
         }
-        
+
+        //End shape rendering
         Gui.end(Gui.sr);
+
+        //Begin batch
         Gui.begin(batch);
+        //Draw button text
         Gui.drawTextCenteredAt(Gui.batch, text, getX() + getWidth()/2, getY() + getHeight()/2);
     }
     
