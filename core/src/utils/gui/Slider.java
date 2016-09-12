@@ -138,7 +138,7 @@ public class Slider extends Actor {
     }
 
     /**
-     * Determines if the mouse was just clicked and is currently over within this object's bounds.
+     * Determines if the mouse was just clicked and is currently within this object's bounds.
      *
      * @return true if the mouse was just clicked and is within this object's bounds, false otherwise
      */
@@ -182,5 +182,14 @@ public class Slider extends Actor {
         Gui.font.draw(batch, text, getX() - Gui.getStringPixelWidth(text) - 5, getY() + getHeight()/2 + Gui.getStringPixelHeight(text)/2);
         String valueText = "" + getValue();
         Gui.font.draw(batch, valueText, getX() + getWidth() + 5, getY() + getHeight()/2 + Gui.getStringPixelHeight(valueText)/2);
+
+        //End batch
+        Gui.end(batch);
+        Gui.begin(Gui.sr, ShapeRenderer.ShapeType.Line, Gui.trim_color);
+
+        //Draw trim
+        if (Gui.has_border) {
+            Gui.sr.rect(getX(), getY(), getWidth(), getHeight());
+        }
     }
 }
