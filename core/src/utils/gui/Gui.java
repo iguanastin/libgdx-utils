@@ -55,7 +55,37 @@ public abstract class Gui {
     public static BitmapFont font;
     
     private static final GlyphLayout GLYPHS = new GlyphLayout();
-    
+
+    /**
+     * Applies a look and feel for the Gui
+     *
+     * Makes no changes if border < 0 or any color is null
+     *
+     * @param border General border width to be used, must be >= 0
+     * @param has_border Whether or not this Gui draws a border
+     * @param background_color Background color to fill the window with at the beginning of the rendering cycle
+     * @param frame_color Frame background color
+     * @param trim_color Frame trim color
+     * @param text_color Text color
+     * @param alternate_color Alternate color (Used inconsistently)
+     * @return True if settings were applied, false if no changes made
+     */
+    public static boolean applyLookAndFeel(int border, boolean has_border, Color background_color, Color frame_color, Color trim_color, Color text_color, Color alternate_color) {
+        if (border >= 0 && background_color != null && frame_color != null && trim_color != null && text_color != null && alternate_color != null) {
+            return false;
+        }
+
+        Gui.border = border;
+        Gui.has_border = has_border;
+        Gui.background_color = background_color;
+        Gui.frame_color = frame_color;
+        Gui.trim_color = trim_color;
+        Gui.text_color = text_color;
+        Gui.alternate_color = alternate_color;
+
+        return true;
+    }
+
     /**
      * Disposes and recreates renderers. Should be called when window is resized to apply effects of viewport changes to rendering.
      */
